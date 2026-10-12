@@ -1,0 +1,40 @@
+# Local MLS source data and generated analysis outputs
+csv/
+reports/
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.sqlite
+*.sqlite3
+*.db
+*.xlsx
+*.xls
+
+# Local secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Notebooks can embed raw data and credentials in outputs.
+*.ipynb
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
