@@ -1,8 +1,12 @@
 # %% Setup
-"""Weeks 4–5: clean the sold data, flag problems and save quality reports.
+"""Weeks 4–5: clean sold data and apply the final missing-data decisions.
 
 All rows are kept. Invalid measurements become blank instead of being guessed.
 The matching notebook presents these rules step by step, with previews and charts.
+Running this file creates both the typed Cleaned CSV and the final Cleaned_Final
+CSV. Final preparation keeps every row, drops nine sparse fields, imputes only
+supported bathroom counts and derives missing lot sizes from explicit units.
+Original list prices, sale prices, dates and locations are not guessed.
 """
 
 import json
@@ -220,6 +224,21 @@ Use schema.json to restore dates, numeric types, booleans and text identifiers w
     return sold, reports
 
 
-# %% Run the cleaning
+def finalize(input_path=INPUT_FILE, output_path=OUTPUT_FILE, report_dir=REPORT_DIR, encoding="utf-8"):
+    """One-command deliverable: raw data -> cleaned data -> final analysis copy.
+
+    Keep run() available for the notebook's original, non-imputed cleaning steps.
+    Final missing-value decisions and their investigations are saved in final/.
+    """
+    from weeks_4_5_missing_data_finalization import finalize_data
+
+    final_path = Path(output_path).with_name(Path(output_path).stem + "_Final.csv")
+    if final_path.resolve() == Path(input_path).resolve():
+        raise ValueError("The final output must not overwrite the raw input")
+    cleaned, _ = run(input_path, output_path, report_dir, encoding)
+    return finalize_data(cleaned, output_path, final_path, Path(report_dir) / "final")
+
+
+# %% Run the complete cleaning and preparation
 if __name__ == "__main__":
-    sold, reports = run()
+    final_sold, final_summary = finalize()
