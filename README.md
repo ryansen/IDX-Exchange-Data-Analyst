@@ -150,6 +150,65 @@ experiment and final-decision sections. Section 42 displays the final checklist
 and meeting summary. It identifies the authoritative Cleaned_Final CSV clearly;
 the earlier exploratory AnalysisReady file is retained only for comparison.
 
+## Week 6: feature engineering and market metrics
+
+Run the Week 6 script with the project environment (or another environment with
+`requirements.txt` installed):
+
+```powershell
+# For a fresh setup:
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt
+
+.venv/Scripts/python.exe python/weeks_6_feature_engineering.py
+```
+
+The entry point is `python/weeks_6_feature_engineering.py`; the spatial helper is
+`python/weeks_6_school_districts.py`. The input is the final Weeks 4–5 sold CSV.
+The script creates `csv/CRMLSSold_Residential_202401_202608_Week6_MarketMetrics.csv`
+and reports in `reports/week_6/`, including the required sample output and county
+summary. The Weeks 4–5 files are preserved.
+
+- `PriceRatio` and `CloseToOriginalListRatio` are aliases for
+  `ClosePrice / OriginalListPrice`, as defined in the handbook.
+- `PricePerSqFt` uses `ClosePrice / LivingArea`. Unknown/nonpositive denominators
+  stay null; original list prices are never replaced with current list prices.
+- `DaysOnMarket` remains unchanged. `Year`, `Month`, `YrMo` (`YYYY-MM`) and
+  `CloseMonth` come from `CloseDate`.
+- Listing-to-contract and contract-to-close durations are calendar days. Known
+  contradictory timelines remain null; missing date pairs stay unknown.
+- Office names are restored from the raw export using one-to-one source record
+  identity checks. Summaries cover property types/subtypes, counties/MLS areas,
+  listing offices, buyer offices and months, with valid counts for each metric.
+
+The school helper downloads the official CDE 2024–25 district polygons once into
+`csv/reference/` and performs the point-in-polygon join locally. No property
+coordinates are sent to the boundary service. District types have separate name
+and code fields; codes are text to preserve leading zeros. The separate
+`school_district_membership.csv` bridge supports legitimate elementary/high
+overlap without multiplying the main MLS dataset. Ambiguous, unmatched and
+geographically excluded records are explicitly flagged. District boundaries use
+a fixed 2024–25 reference vintage across the sales period; they are not school
+attendance assignments or a transaction-date-specific boundary history.
+
+The first run needs network access only if the public polygon cache is missing:
+
+```powershell
+.venv/Scripts/python.exe python/weeks_6_school_districts.py
+.venv/Scripts/python.exe -m unittest discover -s python -p "test_weeks_6_feature_engineering.py"
+```
+
+`reports/week_6/schema.json` documents CSV reload types. Segment record shares use
+the retained input records; they are not deduplicated transaction market shares.
+Unknown office names remain an explicit missing group. All MLS outputs stay local.
+
+The companion `python/weeks_6_feature_engineering.ipynb` has 15 short cells with
+sample formula checks, segment previews, monthly charts and school-match coverage.
+Select the project .venv kernel. Its default reads verified saved results; set
+`REBUILD = True` to repeat the workflow. Display ratios as percentages in Tableau
+if desired (1.0 = 100%). The full metric dictionary and sample formula inputs are
+in `reports/week_6/`.
+
 ```bash
 python -m unittest discover -s python -p "test_missing_data_experiments.py"
 ```
