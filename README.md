@@ -202,7 +202,7 @@ The first run needs network access only if the public polygon cache is missing:
 the retained input records; they are not deduplicated transaction market shares.
 Unknown office names remain an explicit missing group. All MLS outputs stay local.
 
-The companion `python/weeks_6_feature_engineering.ipynb` has 15 short cells with
+The companion `python/weeks_6_feature_engineering.ipynb` has 16 short cells with
 sample formula checks, segment previews, monthly charts and school-match coverage.
 Select the project .venv kernel. Its default reads verified saved results; set
 `REBUILD = True` to repeat the workflow. Display ratios as percentages in Tableau
